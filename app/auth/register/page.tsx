@@ -1,7 +1,7 @@
 "use client"
 
 import { Paper, TextField, FormGroup, FormControlLabel, Checkbox, Typography, FormHelperText, Divider, Box } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { literal, object, string, TypeOf } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,6 +9,7 @@ import axios from 'axios';
 import { LoadingButton } from '@mui/lab';
 import ProviderSignin from '@/components/ProviderSignin';
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 const registerSchema = object({
     name: string()
@@ -33,6 +34,7 @@ type RegisterInput = TypeOf<typeof registerSchema>;
 const Register = () => {
 
     const router = useRouter()
+    const session = useSession()
 
     const [loading, setLoading] = useState(false);
 
@@ -58,6 +60,12 @@ const Register = () => {
             setLoading(false)
         }
     };
+
+    useEffect(() => {
+        if (session.data && session.status === 'authenticated') {
+            router.push('/list')
+        }
+    }, [session, router])
 
     return (
         <Paper

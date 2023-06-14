@@ -11,8 +11,11 @@ import { Avatar, List, ListItemAvatar, Paper, Typography, Skeleton, IconButton }
 import LoadingIndicator from '@/components/LoadingIndicator';
 import InfiniteLoader from "react-window-infinite-loader";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useSession } from 'next-auth/react'
+import toast, { Toaster } from 'react-hot-toast';
+import PassengerInformation from '@/components/PassengerInformation';
 
-type Passenger = {
+export type Passenger = {
     _id: string;
     name: string;
     trips: number;
@@ -32,6 +35,9 @@ export default function VirtualizedList() {
 
     const [passengers, setPassengers] = useState<Passenger[]>([])
     const [airlines, setAirlines] = useState<Airline[]>([])
+    const [showPassenger, setShowPassenger] = useState<boolean>(false)
+    const [passengerInfo, setPassengerInfo] = useState<Passenger | null>(null)
+    const session = useSession()
 
 
     useEffect(() => {
@@ -48,8 +54,29 @@ export default function VirtualizedList() {
     }, [])
 
     const deletePassenger = async (id: string) => {
-        const res = await axios.delete(`https://api.instantwebtools.net/v1/passenger/:${id}`)
-        console.log("DELETE", res)
+        if (!session.data?.user) {
+            toast.error('Please signin to delete user!')
+            return
+        }
+        const res = await axios.delete(`https://api.instantwebtools.net/v1/passenger/${id}`)
+        if (res.status === 200) {
+            toast.success('Successfully deleted user!')
+            const newPassengers = passengers.filter((passenger) => passenger._id !== id)
+            setPassengers(newPassengers)
+        }
+    }
+
+    const getPassenger = async (id: string) => {
+        if (!session.data?.user) {
+            toast.error('Please signin to view passenger data!')
+            return
+        }
+        const res = await axios.get(`https://api.instantwebtools.net/v1/passenger/${id}`)
+        console.log(res)
+        if (res.data) {
+            setShowPassenger(true)
+            setPassengerInfo(res.data)
+        }
     }
 
 
@@ -92,12 +119,12 @@ export default function VirtualizedList() {
                     </Box>
                     :
                     <ListItemButton >
-                        <ListItemAvatar>
+                        <ListItemAvatar onClick={() => getPassenger(passengers[index]['_id'])}>
                             <Avatar >
                                 {(passengers[index]['name'] as string).charAt(0).toUpperCase()}
                             </Avatar>
                         </ListItemAvatar>
-                        <ListItemText primary={passengers[index]['name']} secondary={`${passengers[index]['trips']} trips`} />
+                        <ListItemText onClick={() => getPassenger(passengers[index]['_id'])} primary={passengers[index]['name']} secondary={`${passengers[index]['trips']} trips`} />
                         <IconButton onClick={() => deletePassenger(passengers[index]['_id'])}><DeleteIcon color='error' /></IconButton>
                     </ListItemButton>}
             </ListItem>
@@ -107,7 +134,9 @@ export default function VirtualizedList() {
 
     return (
         <Box sx={{ p: 5, display: 'flex', height: '100%', justifyContent: 'space-around' }}>
+
             <Paper elevation={3} sx={{ p: 3, minWidth: 360, height: 540 }}>
+                {/* <Alert severity="info">This is an info alert — check it out!</Alert> */}
                 <Typography variant='h5'>{`Passengers${passengers.length ? '(' + passengers.length + ')' : ''}`}</Typography>
 
 
@@ -144,6 +173,14 @@ export default function VirtualizedList() {
                     }
                 </List>
             </Paper>
+            <Toaster />
+            <PassengerInformation
+                open={showPassenger}
+                passenger={passengerInfo}
+                handleClose={() => {
+                    setShowPassenger(false)
+                    setPassengerInfo(null)
+                }} />
         </Box>
     );
 }

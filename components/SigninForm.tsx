@@ -40,7 +40,7 @@ const SigninForm = () => {
 
     useEffect(() => {
         if (session.data && session.status === 'authenticated') {
-            router.push('/')
+            router.push('/list')
         }
     }, [session, router])
 
