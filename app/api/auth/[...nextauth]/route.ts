@@ -30,7 +30,7 @@ function getGithubCredentials() {
 
 import prisma from '@/libs/prismadb';
 
-export const authOptions: AuthOptions = {
+const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Sign in',
