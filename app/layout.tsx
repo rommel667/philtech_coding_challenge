@@ -1,7 +1,7 @@
-import Navbar from '@/components/Navbar'
+import NavBar from '@/components/Navbar'
 import './globals.css'
 import { Inter } from 'next/font/google'
-
+import NextAuthProvider from './Provider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,8 +18,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Navbar />
-        {children}
+        <NextAuthProvider>
+          <NavBar />
+          {children}
+        </NextAuthProvider>
       </body>
     </html>
   )
