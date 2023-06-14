@@ -8,13 +8,11 @@ import { signIn } from 'next-auth/react'
 const ProviderSignin = () => {
 
     const handleGoogleSignin = async () => {
-        const res = await signIn('google')
-        console.log('GOOGLE RES', res)
+        await signIn('google')
     }
 
     const handleGithubSignin = async () => {
-        const res = await signIn('github')
-        console.log('GITHUB RES', res)
+        await signIn('github')
     }
 
     return (

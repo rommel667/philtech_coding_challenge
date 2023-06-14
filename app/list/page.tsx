@@ -7,9 +7,10 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import axios from 'axios'
-import { Avatar, List, ListItemAvatar, Paper, Typography, Skeleton } from '@mui/material';
+import { Avatar, List, ListItemAvatar, Paper, Typography, Skeleton, IconButton } from '@mui/material';
 import LoadingIndicator from '@/components/LoadingIndicator';
 import InfiniteLoader from "react-window-infinite-loader";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 type Passenger = {
     _id: string;
@@ -35,20 +36,21 @@ export default function VirtualizedList() {
 
     useEffect(() => {
         const getPassengers = async () => {
-            console.log("GETTING PASSENGERS")
             const res = await axios.get('https://api.instantwebtools.net/v1/passenger?page=0&size=100')
-            console.log("PASSENGERS", res.data.data)
             setPassengers(res.data.data)
         }
         getPassengers()
         const getAirlines = async () => {
-            console.log("GETTING AIRLINES")
             const res = await axios.get('https://api.instantwebtools.net/v1/airlines')
-            console.log("AIRLINES", res)
             setAirlines(res.data)
         }
         getAirlines()
     }, [])
+
+    const deletePassenger = async (id: string) => {
+        const res = await axios.delete(`https://api.instantwebtools.net/v1/passenger/:${id}`)
+        console.log("DELETE", res)
+    }
 
 
     const AirlineRow = ({ index, isScrolling, style }: ListChildComponentProps) => {
@@ -89,13 +91,14 @@ export default function VirtualizedList() {
                         <Typography>Loading...</Typography>
                     </Box>
                     :
-                    <ListItemButton onClick={() => console.log(passengers[index]['_id'])}>
+                    <ListItemButton >
                         <ListItemAvatar>
                             <Avatar >
                                 {(passengers[index]['name'] as string).charAt(0).toUpperCase()}
                             </Avatar>
                         </ListItemAvatar>
                         <ListItemText primary={passengers[index]['name']} secondary={`${passengers[index]['trips']} trips`} />
+                        <IconButton onClick={() => deletePassenger(passengers[index]['_id'])}><DeleteIcon color='error' /></IconButton>
                     </ListItemButton>}
             </ListItem>
 
@@ -137,7 +140,8 @@ export default function VirtualizedList() {
                         >
                             {AirlineRow}
                         </FixedSizeList> :
-                        <LoadingIndicator />}
+                        <LoadingIndicator subtext='This may take a while' />
+                    }
                 </List>
             </Paper>
         </Box>

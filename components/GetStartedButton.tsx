@@ -11,7 +11,7 @@ interface GetStartedButtonProps {
 const GetStartedButton: FC<GetStartedButtonProps> = ({ }) => {
     return (
         <Link href={'/auth/register'}>
-            <Button size='large' variant='contained' sx={{ height: 60, width: 200, borderRadius: 20, fontSize: 20 }}>Get Started</Button>
+            <Button size='large' variant='contained' sx={{ height: 60, width: 200, borderRadius: 20, fontSize: 20 }}>Register</Button>
         </Link>
     )
 }
