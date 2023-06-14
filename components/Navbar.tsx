@@ -15,6 +15,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import BallotIcon from '@mui/icons-material/Ballot';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation'
 import { signOut, useSession } from 'next-auth/react'
 
 const pages = [
@@ -29,6 +30,7 @@ function NavBar() {
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
     const session = useSession()
+    const router = useRouter()
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -44,6 +46,11 @@ function NavBar() {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+
+    const handleSignout = () => {
+        signOut()
+        router.push('/')
+    }
 
     return (
         <AppBar position="static">
@@ -169,7 +176,7 @@ function NavBar() {
                                             <Typography textAlign="center">Profile</Typography>
                                         </MenuItem>
                                     </Link>
-                                    <MenuItem onClick={() => signOut()}>
+                                    <MenuItem onClick={handleSignout}>
                                         <Typography textAlign="center">Logout</Typography>
                                     </MenuItem>
                                 </Menu> :
