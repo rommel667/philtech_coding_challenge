@@ -7,7 +7,6 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import axios from 'axios'
-import PassengersTable from '@/components/PassengersTable';
 import { Avatar, List, ListItemAvatar, Paper, Typography } from '@mui/material';
 import LoadingIndicator from '@/components/LoadingIndicator';
 
