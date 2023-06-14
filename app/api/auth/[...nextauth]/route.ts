@@ -31,7 +31,7 @@ function getGithubCredentials() {
 
 import prisma from '@/libs/prismadb';
 
-const handler: NextAuthOptions = NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Sign in',
@@ -81,6 +81,8 @@ const handler: NextAuthOptions = NextAuth({
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
