@@ -43,7 +43,7 @@ const Signin = () => {
         if (session.data && session.status === 'authenticated') {
             router.push('/')
         }
-    }, [session])
+    }, [session, router])
 
     const onSubmitHandler: SubmitHandler<SigninInput> = async (data) => {
         setLoading(true)
