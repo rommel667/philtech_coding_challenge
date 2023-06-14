@@ -39,17 +39,35 @@ export default function VirtualizedList() {
     const [passengerInfo, setPassengerInfo] = useState<Passenger | null>(null)
     const session = useSession()
 
+    const getPassengers = async () => {
+        try {
+            const res = await axios.get('https://api.instantwebtools.net/v1/passenger?page=0&size=100')
+            if (res.data) {
+                setPassengers(res.data.data)
+            } else {
+                toast.error('Error getting passengers data!')
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    const getAirlines = async () => {
+        try {
+            const res = await axios.get('https://api.instantwebtools.net/v1/airlines')
+            if (res.data) {
+                setAirlines(res.data)
+            } else {
+                toast.error('Error getting airlines data!')
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     useEffect(() => {
-        const getPassengers = async () => {
-            const res = await axios.get('https://api.instantwebtools.net/v1/passenger?page=0&size=100')
-            setPassengers(res.data.data)
-        }
         getPassengers()
-        const getAirlines = async () => {
-            const res = await axios.get('https://api.instantwebtools.net/v1/airlines')
-            setAirlines(res.data)
-        }
         getAirlines()
     }, [])
 
@@ -58,12 +76,19 @@ export default function VirtualizedList() {
             toast.error('Please signin to delete user!')
             return
         }
-        const res = await axios.delete(`https://api.instantwebtools.net/v1/passenger/${id}`)
-        if (res.status === 200) {
-            toast.success('Successfully deleted user!')
-            const newPassengers = passengers.filter((passenger) => passenger._id !== id)
-            setPassengers(newPassengers)
+        try {
+            const res = await axios.delete(`https://api.instantwebtools.net/v1/passenger/${id}`)
+            if (res.status === 200) {
+                toast.success('Successfully deleted user!')
+                const newPassengers = passengers.filter((passenger) => passenger._id !== id)
+                setPassengers(newPassengers)
+            } else {
+                toast.error('Error deleting user')
+            }
+        } catch (error) {
+            console.log(error)
         }
+
     }
 
     const getPassenger = async (id: string) => {
@@ -71,12 +96,19 @@ export default function VirtualizedList() {
             toast.error('Please signin to view passenger data!')
             return
         }
-        const res = await axios.get(`https://api.instantwebtools.net/v1/passenger/${id}`)
-        console.log(res)
-        if (res.data) {
-            setShowPassenger(true)
-            setPassengerInfo(res.data)
+        try {
+            const res = await axios.get(`https://api.instantwebtools.net/v1/passenger/${id}`)
+
+            if (res.data) {
+                setShowPassenger(true)
+                setPassengerInfo(res.data)
+            } else {
+                toast.error('Error getting passenger data')
+            }
+        } catch (error) {
+            console.log(error)
         }
+
     }
 
 
@@ -133,7 +165,8 @@ export default function VirtualizedList() {
     }
 
     return (
-        <Box sx={{ p: 5, display: 'flex', height: '100%', justifyContent: 'space-around' }}>
+        //TODO: Display as tabs for small screens
+        <Box sx={{ p: 5, display: 'flex', width: '100%', height: '100%', justifyContent: 'space-evenly' }}>
 
             <Paper elevation={3} sx={{ p: 3, minWidth: 360, height: 540 }}>
                 {/* <Alert severity="info">This is an info alert — check it out!</Alert> */}
