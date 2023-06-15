@@ -1,6 +1,6 @@
 "use client"
 
-import { Paper, TextField, FormGroup, FormControlLabel, Checkbox, Typography, FormHelperText, Divider, Box } from '@mui/material'
+import { Paper, TextField, FormGroup, FormControlLabel, Checkbox, Typography, FormHelperText, Divider, Box, duration } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { literal, object, string, TypeOf } from 'zod';
@@ -10,6 +10,7 @@ import { LoadingButton } from '@mui/lab';
 import ProviderSignin from '@/components/ProviderSignin';
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
+import toast, { Toaster } from 'react-hot-toast';
 
 const registerSchema = object({
     name: string()
@@ -51,11 +52,16 @@ const Register = () => {
         setLoading(true)
         try {
             const res = await axios.post('/api/register', data)
-            if (res) {
+            console.log("RES", res)
+            if (res.data) {
+                toast.success('Successfully registered. Log in to your account.', { duration: 5000 })
                 router.push('/auth/signin')
             }
         } catch (error) {
             console.log(error)
+
+            toast.error('Email already exists.')
+
         } finally {
             setLoading(false)
         }
@@ -146,6 +152,7 @@ const Register = () => {
             <Divider sx={{ my: 2 }} />
 
             <ProviderSignin />
+            <Toaster />
         </Paper>
     )
 }

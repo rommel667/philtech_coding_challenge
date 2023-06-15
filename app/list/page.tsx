@@ -9,11 +9,13 @@ import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import axios from 'axios'
 import { Avatar, List, ListItemAvatar, Paper, Typography, Skeleton, IconButton } from '@mui/material';
 import LoadingIndicator from '@/components/LoadingIndicator';
-import InfiniteLoader from "react-window-infinite-loader";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSession } from 'next-auth/react'
 import toast, { Toaster } from 'react-hot-toast';
 import PassengerInformation from '@/components/PassengerInformation';
+
+//TODO: implement infinite loading on passengers
+import InfiniteLoader from "react-window-infinite-loader";
 
 export type Passenger = {
     _id: string;
